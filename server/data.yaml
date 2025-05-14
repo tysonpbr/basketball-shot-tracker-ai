@@ -1,0 +1,6 @@
+train: C:/Users/tyson/Desktop/basketball-shot-tracker-ai/server/data/train/images
+val: C:/Users/tyson/Desktop/basketball-shot-tracker-ai/server/data/valid/images
+test: C:/Users/tyson/Desktop/basketball-shot-tracker-ai/server/data/test/images
+
+nc: 3
+names: ['ball', 'human', 'rim']

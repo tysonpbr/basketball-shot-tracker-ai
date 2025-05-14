@@ -1,0 +1,87 @@
+# =========================
+# React Native (Frontend)
+# =========================
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+ios/Pods/
+ios/Podfile.lock
+android/.gradle/
+android/app/build/
+android/.idea/
+*.keystore
+*.jks
+*.hprof
+*.iml
+*.log
+
+# React Native build artifacts
+*.xcworkspace
+*.xcodeproj
+*.xcuserstate
+*.xcuserdatad
+*.DS_Store
+
+# Metro
+.expo/
+.expo-shared/
+
+# Temporary files
+temp/
+tmp/
+
+# Android Studio
+.gradle/
+local.properties
+
+# VS Code settings (optional)
+.vscode/
+
+# macOS junk
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =========================
+# Python (Backend)
+# =========================
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# FastAPI + Uvicorn logs
+*.db
+*.sqlite3
+
+# Jupyter notebooks (if any)
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# =========================
+# General
+# =========================
+.env
+.env.*
+*.bak
+*.swp
+*.swo
+*.orig
+*.rej
+*.tmp
