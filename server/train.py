@@ -20,7 +20,7 @@ def main():
         batch=16,
         workers=4,
         device=device,
-        project='server'
+        project='results'
     )
 
     model.val()
