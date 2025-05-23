@@ -4,9 +4,14 @@ const CameraPage = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
-  const [detections, setDetections] = useState([]);
-  const [videoSize, setVideoSize] = useState({ width: 640, height: 480 });
   const wsRef = useRef(null);
+
+  const [detections, setDetections] = useState([]);
+  const [fps, setFps] = useState(0);
+  const [videoSize, setVideoSize] = useState({ width: 640, height: 480 });
+
+  const isSending = useRef(false);
+  const lastFrameTime = useRef(Date.now());
 
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
@@ -19,6 +24,7 @@ const CameraPage = () => {
             height: videoRef.current.videoHeight,
           });
           videoRef.current.play();
+          sendNextFrame(); 
         };
       }
     });
@@ -26,31 +32,40 @@ const CameraPage = () => {
     wsRef.current = new WebSocket('ws://localhost:8000/ws');
 
     wsRef.current.onmessage = (event) => {
+      isSending.current = false;
+
+      const now = Date.now();
+      const delta = now - lastFrameTime.current;
+      lastFrameTime.current = now;
+      setFps(Math.round(1000 / delta));
+
       const data = JSON.parse(event.data);
       if (data.detections) setDetections(data.detections);
+
+      sendNextFrame();
     };
 
-    const interval = setInterval(() => {
-      if (!videoRef.current || !canvasRef.current) return;
-
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      ctx.drawImage(videoRef.current, 0, 0);
-
-      const imageData = canvas.toDataURL('image/jpeg');
-      const base64 = imageData.split(',')[1];
-      if (base64 && wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.send(base64);
-      }
-    }, 200);
-
     return () => {
-      clearInterval(interval);
       wsRef.current?.close();
     };
   }, []);
+
+  const sendNextFrame = () => {
+    if (!videoRef.current || !canvasRef.current || isSending.current || wsRef.current?.readyState !== WebSocket.OPEN) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    ctx.drawImage(videoRef.current, 0, 0);
+
+    const imageData = canvas.toDataURL('image/jpeg');
+    const base64 = imageData.split(',')[1];
+    if (base64) {
+      isSending.current = true;
+      wsRef.current.send(base64);
+    }
+  };
 
   const screenW = window.innerWidth;
   const screenH = window.innerHeight;
@@ -126,6 +141,22 @@ const CameraPage = () => {
             {`${det.label}${det.confidence ? ` (${det.confidence}%)` : ''}`}
           </div>
         ))}
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          top: 10,
+          right: 10,
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          color: 'lime',
+          padding: '6px 12px',
+          borderRadius: '8px',
+          fontSize: 14,
+          fontFamily: 'monospace',
+        }}
+      >
+        {`FPS: ${fps}`}
       </div>
     </div>
   );
