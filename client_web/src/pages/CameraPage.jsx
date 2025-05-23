@@ -44,7 +44,7 @@ const CameraPage = () => {
       if (base64 && wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(base64);
       }
-    }, 50);
+    }, 200);
 
     return () => {
       clearInterval(interval);
