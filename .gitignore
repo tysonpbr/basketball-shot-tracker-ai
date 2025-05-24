@@ -52,6 +52,7 @@ Thumbs.db
 # Python (Backend)
 # =========================
 venv/
+yolo_convert_env/
 __pycache__/
 *.py[cod]
 *.pyo
